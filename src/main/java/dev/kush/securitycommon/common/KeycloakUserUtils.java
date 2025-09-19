@@ -17,7 +17,7 @@ import java.util.Map;
  * token structure.</p>
  * 
  * <p>Similar to Auth0, Keycloak JWT tokens contain nested claims within the 
- * "details.app_metadata" structure, and this implementation handles the extraction
+ * "details" structure, and this implementation handles the extraction
  * of these nested values using Keycloak-specific claim names.</p>
  * 
  * <p>This component is conditionally registered only when the identity provider
@@ -28,8 +28,6 @@ import java.util.Map;
  * @see UserUtils
  * @see AuthConstants
  */
-@Component
-@ConditionalOnProperty(name = "identity.provider", havingValue = "keycloak")
 public class KeycloakUserUtils implements UserUtils {
     
     /**
@@ -41,7 +39,7 @@ public class KeycloakUserUtils implements UserUtils {
     @Override
     public String getCurrentUserEmail() {
         Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return jwt.getClaimAsString("details.email");
+        return jwt.getClaimAsString(AuthConstants.KEYCLOAK_EMAIL_CLAIM);
     }
 
     /**
@@ -59,21 +57,16 @@ public class KeycloakUserUtils implements UserUtils {
      * {@inheritDoc}
      * 
      * <p>For Keycloak, the user ID is extracted from the "user_id" claim within
-     * the "details.app_metadata" nested structure. If the app_metadata is not
+     * the "details" nested structure. If the details is not
      * available or an error occurs, returns 0L.</p>
      * 
      * @return the user's internal ID, or 0L if not available or on error
      */
     @Override
     public Long getCurrentUserId() {
-        Map<String, Object> detailsMap;
-        try {
-            Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            detailsMap = jwt.getClaimAsMap("details.app_metadata");
-            if (detailsMap == null) {
-                return 0L;
-            }
-        } catch (Exception e) {
+        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        final Map<String, Object> detailsMap = jwt.getClaimAsMap(AuthConstants.KEYCLOAK_DETAILS_CLAIM);
+        if (detailsMap == null) {
             return 0L;
         }
         return Long.parseLong(detailsMap.get(AuthConstants.KEYCLOAK_USER_ID_CLAIM).toString());
@@ -83,7 +76,7 @@ public class KeycloakUserUtils implements UserUtils {
      * {@inheritDoc}
      * 
      * <p>For Keycloak, the company ID is extracted from the "company_id" claim within
-     * the "details.app_metadata" nested structure. If the app_metadata is not
+     * the "details" nested structure. If the details is not
      * available, returns 0L.</p>
      * 
      * @return the user's company ID, or 0L if not available
@@ -91,7 +84,7 @@ public class KeycloakUserUtils implements UserUtils {
     @Override
     public Long getCurrentCompanyId() {
         Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        final Map<String, Object> detailsMap = jwt.getClaimAsMap("details.app_metadata");
+        final Map<String, Object> detailsMap = jwt.getClaimAsMap(AuthConstants.KEYCLOAK_DETAILS_CLAIM);
         if (detailsMap == null) {
             return 0L;
         }
@@ -102,7 +95,7 @@ public class KeycloakUserUtils implements UserUtils {
      * {@inheritDoc}
      * 
      * <p>For Keycloak, the company name is extracted from the "company_name" claim within
-     * the "details.app_metadata" nested structure. If the app_metadata is not
+     * the "details" nested structure. If the details is not
      * available or the company name is not set, returns an empty string.</p>
      * 
      * @return the user's company name, or empty string if not available
@@ -110,17 +103,17 @@ public class KeycloakUserUtils implements UserUtils {
     @Override
     public String getCurrentCompanyName() {
         Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        final Map<String, Object> detailsMap = jwt.getClaimAsMap("details.app_metadata");
+        final Map<String, Object> detailsMap = jwt.getClaimAsMap(AuthConstants.KEYCLOAK_DETAILS_CLAIM);
         if (detailsMap == null) {
             return "";
         }
-        return detailsMap.getOrDefault(AuthConstants.KEYCLOAK_COMPANY_NAME_CLAIM, "").toString();
+        return detailsMap.getOrDefault(AuthConstants.KEYCLOAK_COMPANY_NAME_CLAIM,"").toString();
     }
 
     /**
      * {@inheritDoc}
      * 
-     * <p>For Keycloak, roles are extracted from the "details.roles" claim which
+     * <p>For Keycloak, roles are extracted from the "roles" claim which
      * contains a list of role strings. This method returns the first role
      * from the list, or an empty string if no roles are available.</p>
      * 
@@ -129,10 +122,7 @@ public class KeycloakUserUtils implements UserUtils {
     @Override
     public String getCurrentUserRole() {
         Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<String> roles = jwt.getClaimAsStringList("details.roles");
-        if (roles == null || roles.isEmpty()) {
-            return "";
-        }
-        return roles.getFirst();
+        List<String> roles = jwt.getClaimAsStringList("roles") != null ? jwt.getClaimAsStringList("roles") : List.of();
+        return roles.isEmpty() ? "" : roles.getFirst();
     }
 }

@@ -15,7 +15,13 @@ package dev.kush.securitycommon.common;
  * @since 0.0.1
  */
 public class AuthConstants {
-    
+
+    /**
+     * Keycloak JWT claim name for the user Email.
+     * Used to extract the user's internal ID from Keycloak JWT tokens.
+     */
+    public static final String KEYCLOAK_EMAIL_CLAIM = "email";
+
     /**
      * Keycloak JWT claim name for the user ID.
      * Used to extract the user's internal ID from Keycloak JWT tokens.
@@ -33,6 +39,13 @@ public class AuthConstants {
      * Used to extract the user's company name from Keycloak JWT tokens.
      */
     public static final String KEYCLOAK_COMPANY_NAME_CLAIM = "company_name";
+
+    /**
+     * Keycloak JWT claim name for the user details.
+     * This is the parent claim that contains nested user and company information.
+     */
+    public static final String KEYCLOAK_DETAILS_CLAIM = "details";
+
 
     // Auth0 related constants
 

@@ -26,7 +26,6 @@ import java.util.Map;
  * @see UserUtils
  * @see AuthConstants
  */
-@Component
 public class Auth0UserUtils implements UserUtils {
 
     /**
