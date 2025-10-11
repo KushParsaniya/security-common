@@ -39,7 +39,7 @@ public class JwtCustomizerConfig {
      * FRONTEND_ORIGINS=http://localhost:5174,http://host.docker.internal:5174
      * or use "*" for permissive dev mode (no credentials).
      */
-    @Value("${frontend.origins}")
+    @Value("${frontend.origins:http://localhost:5174,http://host.docker.internal:5174}")
     private String frontendOrigins;
 
     /**
