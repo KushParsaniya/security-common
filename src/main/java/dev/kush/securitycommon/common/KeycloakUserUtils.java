@@ -120,7 +120,7 @@ public class KeycloakUserUtils implements UserUtils {
     @Override
     public String getCurrentUserRole() {
         Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<String> roles = jwt.getClaimAsStringList("roles") != null ? jwt.getClaimAsStringList("roles") : List.of();
+        List<String> roles = jwt.getClaimAsStringList(AuthConstants.KEYCLOAK_ROLE_CLAIM) != null ? jwt.getClaimAsStringList(AuthConstants.KEYCLOAK_ROLE_CLAIM) : List.of();
         return roles.isEmpty() ? "" : roles.getFirst();
     }
 }
