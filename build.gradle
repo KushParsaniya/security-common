@@ -19,11 +19,11 @@ repositories {
 
 dependencies {
     // Security libs used by your code (explicit versions)
-    api 'org.springframework.security:spring-security-oauth2-resource-server:6.5.3'
-    api 'org.springframework.security:spring-security-oauth2-jose:6.5.3'
+    api 'org.springframework.security:spring-security-oauth2-resource-server:7.0.0'
+    api 'org.springframework.security:spring-security-oauth2-jose:7.0.0'
 
     // compileOnly for Boot autoconfigure gives @AutoConfiguration etc at compile-time
-    compileOnly 'org.springframework.boot:spring-boot-autoconfigure:3.5.5'
+    compileOnly 'org.springframework.boot:spring-boot-autoconfigure:4.0.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
