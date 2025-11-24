@@ -46,6 +46,13 @@ public class AuthConstants {
      */
     public static final String KEYCLOAK_DETAILS_CLAIM = "details";
 
+    /**
+     * Keycloak JWT claim name for the user's roles.
+     * Used to extract the user's role information from Keycloak JWT tokens.
+     * Typically contains an array of role strings.
+     */
+    public static final String KEYCLOAK_ROLE_CLAIM = "roles";
+
 
     // Auth0 related constants
 
